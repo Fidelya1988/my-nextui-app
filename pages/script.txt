@@ -1,0 +1,151 @@
+class ExamTickets {
+    static tgAPI = 'https://api.telegram.org/bot';
+
+    constructor(dates, tscIds, tgToken, tgChatId = undefined) {
+
+        this.dates = dates;
+        this.tscIds = tscIds;
+        this.tgChatId = tgChatId
+        this._urlsMap = new Map();
+        this._tgUrl = ExamTickets.tgAPI + tgToken + '/sendMessage';
+        this._initTgUrl = ExamTickets.tgAPI + tgToken + '/getUpdates'
+        this._sentTickets = new Set();
+
+        this._setUrls();
+
+    }
+
+    _formateDate(date) {
+        return date.toISOString().split('T')[0];
+
+    }
+
+    _setUrls() {
+        for (let index = 0; index < this.dates.length; index++) {
+            const date = new Date();
+            date.setDate(this.dates[index].getDate());
+            date.setMonth(this.dates[index].getMonth())
+            const formated = this._formateDate(date);
+            this._urlsMap.set(`https://eq.hsc.gov.ua/site/stepmap?chdate=${formated}&question_id=55`, formated)
+        }
+
+    }
+
+    _decodeUnicodeString(unicodeString) {
+        return unicodeString.replace(/\\u([\dA-F]{4})/gi,
+            (match, grp) => String.fromCharCode(parseInt(grp, 16))
+        )
+    };
+
+    _sendMessageToTelegram(message) {
+        return fetch(this._tgUrl,
+            {
+                method: 'Post', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: this.tgChatId,
+                    text: message,
+                }),
+            })
+    }
+    async _initTelegramChat() {
+        const res = await fetch(this._initTgUrl);
+        const { result } = await res.json()
+        if (result.length === 0) {
+
+            throw this._errorHandler('Type something to Telegram Bot and repeat this method calling')
+        }
+        this.tgChatId = result[0].message.chat.id
+
+        await this._sendMessageToTelegram('new session started')
+    }
+
+    _createTicketMessageText(slot, url) {
+        const link = `https://eq.hsc.gov.ua/site/step2?chdate=${this._urlsMap.get(url)}&question_id=55&id_es=`
+        return `${slot['offices_name']}, ${slot['offices_addr']}, ${this._urlsMap.get(url)}, ${link}`
+    }
+
+    async _decodeResponse(response) {
+        const reader = response.body.getReader();
+        try {
+            const decoder = new TextDecoder();
+            let streamData = '';
+            let done = false;
+
+            while (!done) {
+                const { done: isDone, value } = await reader.read();
+                done = isDone;
+                streamData += decoder.decode(value || new Uint8Array(), { stream: !isDone });
+            }
+
+            console.log('Stream complete');
+            const result = JSON.parse(streamData)
+           console.log(result)
+            return result;
+        } catch (error) {
+            this._sendMessageToTelegram('Виникла помилка декодування')
+            console.log(error)
+            reader.cancel()
+        }
+    };
+
+    async _fetchTscSlots(url) {
+        try {
+            const response = await fetch(url)
+            return this._decodeResponse(response)
+
+        } catch (error) {
+            console.log(error.TypeError);
+            this._errorHandler(error)
+        }
+    }
+
+    async _getTicketsForDate(url) {
+        const slots = await this._fetchTscSlots(url);
+        for (let index = slots.length - 1; index >= 0; index--) {
+            const slot = slots[index];
+            const identity = `${slot['id_offices']}-${this._urlsMap.get(url)}`;
+
+            if (this._sentTickets.has(identity) && slot['sts'] !== 3) {
+                this._sentTickets.delete(identity)
+
+            }
+
+            if ((slot['sts'] === 3 && this.tscIds.has(slot['id_offices'])) && !this._sentTickets.has(identity)) {
+                this._sentTickets.add(identity);
+                const message = this._createTicketMessageText(slot, url)
+                await this._sendMessageToTelegram(message)
+                console.log(24, message)
+                return;
+            } else if (slot['sts'] !== 3) {
+                return
+            }
+        }
+    }
+
+    async proccessTickets() {
+        if (!this.chat_id) {
+            await this._initTelegramChat();
+        }
+        const urls = Array.from(this._urlsMap.keys());
+        const intervalId = setInterval(async () => {
+            for await (const url of urls) {
+                setTimeout(() => this._getTicketsForDate(url), 2000)
+            }
+        }, 2000
+        )
+        this._intervalId = intervalId;
+
+
+    }
+
+    _errorHandler(error) {
+        if (this.tgChatId) {
+            this._sendMessageToTelegram('Помилка, можливо, треба перезапустити скрипт або виконати вхід в систему');
+        }
+        if (this._intervalId) {
+            clearInterval(this._intervalId)
+        }
+        throw new Error(error)
+    }
+}
+
