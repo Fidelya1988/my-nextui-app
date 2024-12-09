@@ -1,4 +1,4 @@
-export const updateScript = async ({ids, dates}: {ids?: string, dates?:string[] }) => {
+export const updateScript = async ({ids, dates}: {ids?: string, dates?:Date[] }) => {
     try {
         console.log('api')
       const res = await fetch('api/script', {
