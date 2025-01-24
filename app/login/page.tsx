@@ -1,11 +1,11 @@
 import React from "react";
-import { Form } from "@/components/form";
-
-const Auth = () => {
+import { Form, FormTypes } from "@/components/form";
+ FormTypes
+const Login = () => {
   return (
     <div>
-      <Form />
-      <div id="amazon-root">
+      {/* <Form  type={FormTypes.login}/> */}
+      {/* <div id="amazon-root">
         <a id="LoginWithAmazon">
           <img
             alt="Login with Amazon"
@@ -14,9 +14,9 @@ const Auth = () => {
             height="32"
           />
         </a>
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default Auth;
+export default Login;

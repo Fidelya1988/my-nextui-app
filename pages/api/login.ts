@@ -18,7 +18,9 @@ type UserResponse  = Omit <UserDto, 'password'> | Error
 interface ResponseData{
   message?: string;
   data?: UserResponse;
-  error?: Error | string | z.ZodIssue [] 
+  error?: Error | string | z.ZodIssue [],
+  accessToken?: string
+  
 }
 const router = createRouter<NextApiRequest, NextApiResponse<ResponseData>>();
 router.post( async (req, res)=>{
@@ -29,9 +31,11 @@ router.post( async (req, res)=>{
             }
         
        
-      const data = await authService.login(req.body)
-   
-      return res.status(200).json({message: 'ok', data})
+      const authData = await authService.login(req.body)
+    const {user, refreshToken, accessToken} = authData
+    
+    res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; HttpOnly; Path=/; Max-Age=${7 * 24 * 60 * 60}; Secure; SameSite=Strict`);
+      return res.json({message: 'ok', data: user, accessToken })
     } catch (error: unknown) {
       console.error('Error updating script:', error);
       if(!(error instanceof Error)) {

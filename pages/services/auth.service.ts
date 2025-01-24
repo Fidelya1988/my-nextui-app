@@ -2,32 +2,15 @@ import { hashPassword } from "../utils/hashPassword"
 import { UserDto } from "../dto/user.dto"
 import "reflect-metadata";
 import { DB } from "../db/db";
-import { connectDb } from "../db/connectDb";
 import { InjectDB } from "../decorators/injectDb.decorator";
 import { v4 as uuidv4 } from 'uuid';
 import { UserModel } from "../models/UserModel";
+import dotenv from 'dotenv';
+import { comparePassword } from "../utils/comparePasswords";
+import { generateAccessToken, generateRefreshToken } from "../utils/tokenActions";
 
 
-function LogAndModify(
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-) {
-    const originalMethod = descriptor.value;
-
-    // Замінюємо оригінальний метод новою функцією
-    descriptor.value = async function (...args: any[]) {
-        console.log(`Метод "${propertyKey}" викликано з аргументами:`, args);
-
-        // Викликаємо оригінальний метод з переданими аргументами
-        const result = await originalMethod.apply(this, args);
-
-        console.log(`Метод "${propertyKey}" повернув результат:`, result);
-        return result;
-    };
-
-    return descriptor;
-}
+dotenv.config()
 
 
 
@@ -46,20 +29,17 @@ export class AuthService {
         return hashPassword(password)
 
     }
-    @LogAndModify
     public async signUp(user: UserDto) {
-        console.log(33, this)
         const hashedPassword = await this.hashPassword(user.password as unknown as string)
-        const id = uuidv4()
         const model =  await this.getModel()
         const existedUser = await model?.findOne({email: user.email})
         if(existedUser) {
             throw new Error('409', {cause: 'Already exist'})
         }
 
-        const payload = {...user, id, password: hashedPassword}
-       await model?.create(payload)
-       return payload
+        const payload = {...user, password: hashedPassword}
+      const result = await model?.create(payload)
+       return result
       
 
    
@@ -67,17 +47,20 @@ export class AuthService {
 
     public async login ({email, password}: {email: string, password: string}) {
         const model  = await this.getModel();
-        const data = await model?.findOne({email})
-        if (!data) {
+        const user = await model?.findOne({email})
+        if (!user) {
             throw new Error('401', {cause: 'User does not exist'})
             
         }
         const hashedPassword =  await hashPassword(password);
-         if( data.password !== hashedPassword) {
+        const isMatch = comparePassword(password, hashedPassword as string);
+         if(!isMatch) {
             throw new Error('401', {cause: 'Wrong password'})
          }
-
-        return data
+       
+          const accessToken =  generateAccessToken(user.id);
+          const refreshToken = generateRefreshToken(user.id)
+        return {user: {id: user.id, name: user.name, email: user.email, role: user.role}, accessToken, refreshToken}
 
     }
 

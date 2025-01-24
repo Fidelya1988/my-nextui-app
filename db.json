@@ -1,0 +1,95 @@
+{
+  "user": [
+    {
+      "name": "Giga2hge",
+      "password": "$2b$10$z.ncKY5FpXFxrQYV1JF0MeT/VggrgYwKaFQx0MDZsxe4E73ij0PfK",
+      "email": "safaptiz2jh33ee@gmail.com",
+      "role": "USER",
+      "id": 1
+    },
+    {
+      "name": "Giga2hge",
+      "password": "$2b$10$jpdCy.y2NSc/S/r6zWcGj.nkZBb5Ry/0PU8B3behkm/RpEUGJbiqe",
+      "email": "safaptiz2jhjkj33e@gmail.com",
+      "role": "USER",
+      "id": 2
+    },
+    {
+      "name": "Guest",
+      "password": "$2b$10$qoepombWIh5D/v7e4WNDSObAU7EcjxaD8WlnwjOBaBNgUz4vTSgM2",
+      "email": "guest@gmail.com",
+      "role": "USER",
+      "id": 3
+    },
+    {
+      "name": "guest23",
+      "email": "safaptiz90909009@gmail.com",
+      "password": "$2b$10$8psfO0r3P.XNri15vGYSqOOXeTu0tOhi6IbIUW20j8l9qjHXUOZvu",
+      "role": "USER",
+      "id": 4
+    },
+    {
+      "name": "sss",
+      "email": "sdsds@dd.com",
+      "password": "$2b$10$Kygy1xTLdWQiYml0J.FrCe1eQnCPaiBgM0FhSYVkNnnVTaOn1fqX2",
+      "role": "USER",
+      "id": 5
+    },
+    {
+      "name": "guestds",
+      "email": "adad@jjj.ddd",
+      "password": "$2b$10$.4HnsqcVGTvjCM8ajm.5yegsgJbVrTBBc0z22bdeJZTnL/i/jK.Iq",
+      "role": "USER",
+      "id": 6
+    },
+    {
+      "name": "guestas",
+      "email": "safaptizxcvx@gmail.com",
+      "password": "$2b$10$vadDdWCIOe6/8PUB67y4s.tJ8ZSb3FSnkftWGhNQNvAd72g0Up5eW",
+      "role": "USER",
+      "id": 7
+    },
+    {
+      "name": "adam@secureticketpurchase.com",
+      "email": "safaptiz@gmail.com",
+      "password": "$2b$10$2wek/VPDCWuVdRvQ3wJbce0CBEoos9yGdysX25NA06W5uoHPLC7ae",
+      "role": "USER",
+      "id": 8
+    },
+    {
+      "name": "as",
+      "email": "sdsdssss@dd.com",
+      "password": "$2b$10$65P4nECvjptnwBhKdwQHb.QoyNrpE/7/aVjKV5HxCxlk6qNkVMhZm",
+      "role": "USER",
+      "id": 9
+    },
+    {
+      "name": "sss",
+      "email": "safaptizwewew@gmail.com",
+      "password": "$2b$10$AdhDQEfarZpjJFjcfiGkrOFVeiGwMVQF6VsKzioA/YFlwZu.ZtpM2",
+      "role": "USER",
+      "id": 10
+    },
+    {
+      "name": "sdsds",
+      "email": "safaptizada@gmail.com",
+      "password": "$2b$10$LagfgEZ/gGchcl9AbYzBFevxAATd0Rn0Gvglv/QQk9pxbejBHthEC",
+      "role": "USER",
+      "id": 11
+    },
+    {
+      "name": "Giga2hge",
+      "password": "$2b$10$WCqUBbD1bbJ8uBSuul6rZerq58IIfjsQ/VoK2k8Z1Y75Y0GvVsS/S",
+      "email": "safaptiz2jhjkjxxx33e@gmail.com",
+      "role": "USER",
+      "id": 12
+    },
+    {
+      "name": "sdsd",
+      "email": "asa@Qddd.cc",
+      "password": "$2b$10$F4XSDAOtYCxH3Qp9j1RY9eeMiEIJpvFvJPn5w25lCm7AGyVCSGqnu",
+      "role": "USER",
+      "id": 13
+    }
+  ]
+}

@@ -1,16 +1,27 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
-import {Navbar as NavbarWrapper, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Snippet} from "@nextui-org/react";
+import {
+  Navbar as NavbarWrapper,
+  NavbarBrand,
+  NavbarMenuToggle,
+  NavbarMenuItem,
+  NavbarMenu,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Button,
+  Snippet,
+} from "@nextui-org/react";
 import { useScript } from "@/context/ScriptContext";
-export const Navbar = () =>{
+export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [codeString, setCodeString] = useState('')
-  const {state} = useScript()
-  useEffect(()=>{
-    console.log('navbar',state)
+  const [codeString, setCodeString] = useState("");
+  const { state } = useScript();
+  useEffect(() => {
+    console.log("navbar", state);
 
-    setCodeString(state.text)
-  }, [state])
+    setCodeString(state.text);
+  }, [state]);
   const menuItems = [
     "Profile",
     "Dashboard",
@@ -31,30 +42,35 @@ export const Navbar = () =>{
       onMenuOpenChange={setIsMenuOpen}
     >
       <NavbarContent className="sm:hidden" justify="start">
-        <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        />
       </NavbarContent>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
-      <NavbarItem>
-
-        </NavbarItem>
+        <NavbarItem></NavbarItem>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-    
         <NavbarItem>
-        <Snippet symbol="#" variant="bordered" color="warning" codeString={codeString}> COPY SCRIPT</Snippet>
-
+          <Snippet
+            symbol="#"
+            variant="bordered"
+            color="warning"
+            codeString={codeString}
+          >
+            {" "}
+            COPY SCRIPT
+          </Snippet>
         </NavbarItem>
-      
       </NavbarContent>
 
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
+          <Link href="/login">Login</Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="warning" href="#" variant="flat">
+          <Button as={Link} color="warning" href="sign-up" variant="flat">
             Sign Up
           </Button>
         </NavbarItem>
@@ -66,7 +82,11 @@ export const Navbar = () =>{
             <Link
               className="w-full"
               color={
-                index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
+                index === 2
+                  ? "warning"
+                  : index === menuItems.length - 1
+                    ? "danger"
+                    : "foreground"
               }
               href="#"
               size="lg"
@@ -78,4 +98,4 @@ export const Navbar = () =>{
       </NavbarMenu>
     </NavbarWrapper>
   );
-}
+};

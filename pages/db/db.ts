@@ -1,3 +1,4 @@
+import { listboxItem } from "@nextui-org/theme";
 import { readFile, writeFile, access } from "fs/promises";
 import { UUIDTypes } from "uuid";
 
@@ -38,15 +39,14 @@ export type ModelWithMethods<Model extends ModelDefinition> = {
 
 export class DB {
   private models: Record<string, ModelDefinition> = {};
+  public dbPath: string = 'db.json'
 
-  constructor(public dbPath: string, models: ModelDefinition[]) {
+  constructor(models: ModelDefinition[]) {
     for (const model of models) {
-      this.models[model.name] = model;
     }
 
   }
   public async init() {
-    console.log('INIT')
     const structure: Record<string, []> = {}
     for (const key of Object.keys(this.models)) {
       structure[key] = []
@@ -65,7 +65,6 @@ export class DB {
     return JSON.parse(fileData);
   }
 
-  // Записуємо дані у файл
   protected async writeData(data: any) {
     await writeFile(this.dbPath, JSON.stringify(data, null, 2), 'utf8');
   }
@@ -102,26 +101,25 @@ export class DB {
     return {
       async create(value: DTO<Model>) {
         const data = await dbInstance.readData()
-
-        data[model.name].push(value);
+        const list = data[model.name];
+        const newItem = { ...value, id: list.length + 1 }
+        list.push(newItem);
         await dbInstance.writeData(data);
-        return value;
+        return newItem;
       },
 
       async findAll() {
         const data = await dbInstance.readData()
-        console.log(111, data, model)
         return data[model.name];
       },
       async findOne(fields) {
-        console.log('FIELDS DB', fields)
         const data = await dbInstance.readData()
-      
-         const result = data[model.name].find((item: ModelDefinition['fields']) => {
+
+        const result = data[model.name].find((item: ModelDefinition['fields']) => {
           let founded: ModelDefinition['fields'] | null = item
-       
+
           for (const [key, value] of Object.entries(fields)) {
-           
+
             if (item[key] != value) {
               founded = null
             }
@@ -134,11 +132,6 @@ export class DB {
         return result
 
       }
-
     };
-
   }
-
-
-
 }
